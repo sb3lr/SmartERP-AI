@@ -1,305 +1,167 @@
-# SmartERP AI – Intelligent ERP System with AI-Powered Image and Invoice Analysis
 
-## Project Goal
-To develop a full-stack web-based ERP platform that integrates artificial intelligence for automating image recognition, invoice analysis, financial recommendations, and customer behavior prediction. The system will support multiple user roles and provide a dashboard interface with data visualization and smart decision support.
-
-## System Overview
-
-The system will have the following main modules:
-
-* Core ERP: inventory, invoices, transactions, user roles.
-* AI Vision Module: image and invoice analysis using OCR and object detection.
-* AI Financial Advisor: pricing suggestions and cost analysis.
-* Invoice Organizer: structured storage and sorting of invoices.
-* Product Recommender: user preference–based product suggestions.
-* Dashboard: dynamic reporting and charts.
-* Authentication and Role Management.
-
-## Tech Stack
-
-### Backend
-
-* Language: Python 3.11+
-* Framework: FastAPI (with Pydantic models, async support)
-* Dependency Manager: Poetry or Pip with venv
-* Environment Variables: managed via .env and python-dotenv
-
-### Frontend
-
-* Language: JavaScript or TypeScript
-* Framework: React.js (with functional components and Hooks)
-* State Management: Redux Toolkit
-* UI Framework: Tailwind CSS or Material UI
-* Chart Library: Chart.js or Recharts
-
-### Database
-
-* Primary DBMS: PostgreSQL
-* ORM: SQLAlchemy or Tortoise ORM with FastAPI
-* Migrations: Alembic
-
-### Authentication and Authorization
-
-* JWT-based authentication with role-based access control
-* OAuth2 login support (optional)
-* Secure password hashing using bcrypt
-
-### File Storage
-
-* Local server file system (/uploads) for MVP
-* Image size limits and MIME-type validation
-
-## AI and OCR Components
-
-### OCR for Text Extraction from Images
-
-* Engine: Tesseract OCR (wrapped via pytesseract)
-* Preprocessing: OpenCV (grayscale, thresholding, denoising)
-* Layout Parsing (optional advanced): LayoutLM (HuggingFace)
-
-### Image Object Detection (Product Recognition)
-
-* Model: YOLOv8 (Ultralytics)
-* Runtime: Python inference pipeline
-* Task: detect product type, label, barcode from image
-
-### Financial Advisor (AI Recommendation Engine)
-
-* Engine: Custom Python logic using Pandas and Scikit-learn
-* Inputs: staff count, salaries, fixed costs, selling prices
-* Outputs: profit margin estimation, price suggestions, daily or monthly reports
-
-### Customer Recommender
-
-* Model: NLP-based recommendation engine
-* Tech: OpenAI GPT-4 API or sentence transformers (BERT) for matching preferences
-* Fallback: Rule-based filtering from database based on tags or metadata
-
-## Key Features
-
-### Core ERP Functionality
-
-* Product and inventory management (CRUD)
-* Customer and supplier database
-* Invoice creation (manual and AI-based)
-* Daily transaction logging
-* User permission levels: Admin, Accountant, Client
-
-### Image and Invoice Processing
-
-* Upload images via frontend
-* OCR and vision analysis to extract:
-
-  * Product name, quantity, price, barcode
-* Auto-link invoice to a customer if matched
-* Store structured data in database
-
-### AI Financial Module
-
-* Interactive form for financial data entry
-* Analysis of:
-
-  * Operating costs
-  * Profit margins
-  * Suggested pricing
-  * Cost-cutting tips
-* Exportable report (CSV, Excel, or printable HTML)
-
-### Invoice Organizer
-
-* Classify by client and date
-* Identify and group recurring items
-* Export summary tables per day or week
-
-### Personalized Product Recommender
-
-* Ask users for preferences (color, category, brand)
-* Suggest matching products from internal database
-* Optionally integrate Amazon, Noon, or AliExpress APIs
-* Show availability status and buy link
-
-### Smart Dashboard
-
-* Total sales, revenue, top products, clients
-* Filters: daily, weekly, monthly
-* Visualized with interactive charts
-* Automated insights and recommendations
-
-## User Roles
-
-* Admin: Full system control, manage users, products, invoices
-* Accountant: View and add invoices, run financial reports
-* Client: Upload images, view matched products, receive suggestions
-* AI Agent (internal): Non-human, executes AI logic and analysis
-
-## APIs and Integrations
-
-* RESTful API structure
-* Protected endpoints with JWT
-* Upload API (image/jpeg, image/png, max 5MB)
-* External APIs (optional): Amazon or Noon product search via public APIs
-* All AI modules must be locally hostable; no paid services unless specified (OpenAI optional)
-
-## Deployment Plan
-
-* Local development: Docker and docker-compose
-* Production: VPS with Ubuntu 22.04+, Nginx, Gunicorn or Uvicorn
-* Static file handling: Nginx
-* Frontend build: Vite with React
-* Backend served via API route
-
-## Getting Started
-
-This guide will walk you through setting up and running the SmartERP AI project on your local machine for development and testing purposes.
-
-### Prerequisites
-
-Before you begin, ensure you have the following installed on your system:
-
-*   **Docker:** [Get Docker](https://docs.docker.com/get-docker/)
-*   **Docker Compose:** [Install Docker Compose](https://docs.docker.com/compose/install/)
-*   **Git:** [Install Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-
-### Installation
-
-1.  **Clone the repository:**
-
-    ```bash
-    git clone <repository-url>
-    cd V2
-    ```
-
-2.  **Configure Backend Environment:**
-
-    Navigate to the `backend` directory and create a `.env` file by copying the example file:
-
-    ```bash
-    cp backend/.env.example backend/.env
-    ```
-
-    Open the `backend/.env` file and modify the variables if necessary. The default values are configured to work with the provided `docker-compose.yml`.
-
-    ```
-    DATABASE_URL=postgresql://user:password@db/smarterp
-    SECRET_KEY=your_secret_key_please_change
-    ALGORITHM=HS256
-    ACCESS_TOKEN_EXPIRE_MINUTES=30
-    ```
-
-    **Important:** For a production environment, you must change `SECRET_KEY` to a strong, unique secret.
-
-### Running the Application (Recommended: Docker)
-
-Once you have completed the installation steps, you can start the application using Docker Compose. This is the recommended way to run the project for a consistent development environment.
-
-1.  **Build and Start Containers:**
-
-    From the **root of the `V2` directory**, run the following command:
-
-    ```bash
-    docker-compose up --build
-    ```
-
-    This command will build the Docker images for the frontend and backend services and then start the containers. The `--build` flag ensures that the images are rebuilt if there are any changes to the `Dockerfile` or the source code.
-
-2.  **Accessing the Application:**
-
-    *   **Frontend:** Open your web browser and navigate to [http://localhost:3000](http://localhost:3000)
-    *   **Backend API:** The backend API will be available at [http://localhost:8000](http://localhost:8000)
-    *   **API Documentation:** Interactive API documentation (Swagger UI) is available at [http://localhost:8000/docs](http://localhost:8000/docs)
-
-### Stopping the Application (Docker)
-
-To stop the application and shut down the containers, press `Ctrl+C` in the terminal where `docker-compose` is running, and then run:
-
-```bash
-docker-compose down
-```
-
-This will stop and remove the containers and the network created by `docker-compose up`.
-
-### Running the Application (Alternative: Manually)
-
-If you prefer not to use Docker, you can run the frontend and backend services separately. You will need to have **Node.js** and **Python** installed on your system.
-
-#### Running the Backend
-
-1.  **Navigate to the backend directory:**
-
-    ```bash
-    cd backend
-    ```
-
-2.  **Create a virtual environment and install dependencies:**
-
-    ```bash
-    python -m venv venv
-    source venv/bin/activate  # On Windows use `venv\Scripts\activate`
-    pip install -r requirements.txt
-    ```
-
-3.  **Start the backend server:**
-
-    ```bash
-    uvicorn app.main:app --reload
-    ```
-
-    The backend will be running at [http://localhost:8000](http://localhost:8000).
-
-#### Running the Frontend
-
-1.  **Navigate to the frontend directory:**
-
-    ```bash
-    cd frontend
-    ```
-
-2.  **Install dependencies:**
-
-    ```bash
-    npm install
-    ```
-
-3.  **Start the frontend development server:**
-
-    ```bash
-    npm start
-    ```
-
-    The frontend will be running at [http://localhost:3000](http://localhost:3000).
-
-## Project Structure
-
-*   `backend/`: Contains the FastAPI application, including all API logic, database models, and AI services.
-*   `frontend/`: Contains the React.js application, including all UI components, pages, and state management logic.
-*   `uploads/`: A directory used for temporary storage of uploaded files (e.g., images for OCR).
-*   `docker-compose.yml`: Defines the services, networks, and volumes for the Docker application.
-
-## User Roles & Default Credentials
-
-For testing purposes, you can use the following default user roles and credentials. These will need to be created in the database first.
-
-*   **Admin:**
-    *   **Email:** `admin@example.com`
-    *   **Password:** `admin123`
-*   **Accountant:**
-    *   **Email:** `accountant@example.com`
-    *   **Password:** `accountant123`
-*   **Client:**
-    *   **Email:** `client@example.com`
-    *   **Password:** `client123`
-
-## Loading Sample Data
-
-To populate the database with sample data for testing, you will need to run a database seeding script. (A script for this will be provided at `backend/app/initial_data.py` and can be executed after the application is running).
-
-## Deliverables
-
-* Complete source code (Git-based)
-* Fully functional frontend and backend
-* Setup and run instructions (README.md and .env.example)
-* API documentation (OpenAPI or Swagger UI)
-* Sample database dump for testing
-* Deployment guide with server configuration
-* Admin dashboard with working CRUD and AI integration
-* At least one example dataset (invoices, products, user types)
+# SmartERP AI
+
+## 1. Project Overview
+
+An intelligent, comprehensive ERP system designesd for managing small and medium-sized businesses, combining:
+
+- Complete management of inventory, invoices, customers, and users.
+- Integration of AI technologies for analyzing invoice and product images (OCR + Object Detection).
+- Smart financial recommendations for product pricing and profit analysis.
+- A user-friendly and modern interface.
+- Self-hosted deployment on the client’s server.
+- One-time purchase licensing model with a unique license per client.
+
+## 2. System Components and Detailed Description
+
+### A. Core ERP Module  
+**Main Functions:**  
+- **Inventory Management**  
+  - CRUD (Create, Read, Update, Delete) for products.  
+  - Tracking quantities and stock availability.  
+  - Categorizing products by type, brand, and category.  
+
+- **Customer and Supplier Management**  
+  - CRUD for personal and financial data.  
+  - Recording transaction history for each customer or supplier.  
+
+- **Invoices and Financial Transactions**  
+  - Creating manual invoices and linking automatically processed invoices and images.  
+  - Tracking invoice status (paid, pending, overdue).  
+  - Recording daily financial transactions.  
+
+- **User Roles System**  
+  - Roles: Admin, Accountant, Client.  
+  - Specific permissions per role (e.g., clients can only upload invoices and view their recommendations).  
+
+- **Financial Reports**  
+  - Periodic reports (weekly, monthly) on sales, profits, and stock.  
+  - Exporting reports in Excel, CSV, and PDF formats.  
+
+### B. AI Vision Module  
+**Main Functions:**  
+- **OCR (Text Extraction from Images)**  
+  - Using Tesseract OCR combined with OpenCV for image enhancement (contrast improvement, noise removal).  
+  - Analyzing colored or black-and-white invoice images.  
+
+- **Object Detection (Product and Barcode Detection)**  
+  - Using YOLOv8 to identify products, barcodes, and quantities in product and invoice images.  
+
+- **Automatic Linking**  
+  - Automatically linking invoice data (products, prices, clients) to system records.  
+
+### C. Financial Advisor Module  
+**Main Functions:**  
+- Analyzing cost data (salaries, fixed and variable expenses).  
+- Calculating profit margins and providing competitive pricing recommendations.  
+- Suggesting ways to improve profitability and reduce costs.  
+- Generating detailed financial reports with export options.  
+
+### D. Invoice Organizer  
+- Organizing invoices with easy search and filtering by date, client, or product.  
+- Grouping recurring invoices and analyzing them periodically.  
+- Supporting uploading invoice images or PDFs linked to invoices.  
+
+### E. Product Recommender  
+- Suggesting products to customers based on preferences like color, type, and brand.  
+- Potential future integration with e-commerce APIs (Amazon, Noon) to expand product options.  
+
+### F. Dashboard  
+- Visual display of sales, profits, best-selling products, and client performance.  
+- Interactive charts with time filters (daily, weekly, monthly).  
+- Smart alerts system (low stock, overdue invoices, low profits).  
+
+### G. Authentication and Role Management  
+- Secure login using JWT tokens.  
+- Password hashing with bcrypt.  
+- Optional OAuth2 support (Google, Microsoft).  
+- Permission customization per user role.  
+
+## 3. UI/UX Design
+
+### A. Frontend  
+- **Technologies:** React.js with TypeScript (for future-proofing), Tailwind CSS or Material UI for responsive design.  
+- **Main Screens:**  
+  - Login/Register page.  
+  - Dashboard displaying summaries and reports.  
+  - Product management (lists, add, edit, delete).  
+  - Customer and supplier management.  
+  - Invoice creation and management.  
+  - Upload and analyze invoice images.  
+  - Financial recommendations page.  
+  - Account settings, roles, and white-label branding.  
+- **User Experience:** Simple and clear interface with concise instructions and meaningful icons. Support for Arabic and English languages.  
+- **Navigation:** Fixed sidebar with clear options for each feature.  
+
+### B. Visual Design  
+- Harmonious modern colors with light and dark mode options.  
+- Readable fonts (Cairo for Arabic, Roboto for English).  
+- Responsive layout supporting desktop, tablet, and mobile devices.  
+- Clear alerts and notifications with interactive buttons.  
+
+## 4. Database Design
+
+### A. Main Tables
+
+| Table Name      | Description                        | Key Columns                                    |
+|-----------------|----------------------------------|------------------------------------------------|
+| Users           | User data and types              | id, name, email, password_hash, role           |
+| Roles           | User roles and permissions       | id, role_name, permissions                       |
+| Products        | Product information              | id, name, category, brand, stock_qty, price, barcode |
+| Customers       | Customer data                   | id, name, contact_info, address                  |
+| Suppliers       | Supplier data                   | id, name, contact_info                            |
+| Invoices        | Invoice data                   | id, customer_id, date, status, total_amount     |
+| InvoiceItems    | Invoice details (products, qty, price) | id, invoice_id, product_id, qty, price        |
+| Transactions    | Financial transactions linked to invoices | id, invoice_id, payment_date, amount         |
+| OCR_Results     | Text extraction results from invoices and images | id, invoice_id, extracted_text           |
+| AI_Detections   | Product detection results in images | id, invoice_id, product_id, detected_qty, confidence_score |
+| Recommendations | Financial and pricing recommendations | id, product_id, suggested_price, date         |
+| Logs            | User activities and operation logs | id, user_id, action, timestamp                   |
+
+### B. Core Relationships  
+- One-to-Many: Customers to Invoices  
+- One-to-Many: Invoices to InvoiceItems  
+- Many-to-One: InvoiceItems to Products  
+- One-to-Many: Users to Logs  
+
+## 5. System Architecture
+
+- **Backend:** Python 3.11+ with FastAPI (async supported)  
+- **Frontend:** React.js with TypeScript  
+- **Database:** PostgreSQL  
+- **Authentication:** JWT + bcrypt  
+- **Image Processing:** OpenCV + Tesseract OCR  
+- **Product Detection:** YOLOv8 (pretrained model with optional retraining)  
+- **Deployment:** Docker / Docker Compose for easy installation and distribution  
+
+## 6. Delivery and Licensing
+
+- Self-hosted standalone version installed on client’s server.  
+- License key issued per client, linked to server IP or domain.  
+- Automatic installation script (Shell or Docker Compose).  
+- Complete documentation including:  
+  - Installation and operation guide.  
+  - Feature and interface explanations.  
+  - API documentation (if applicable).  
+
+## 7. Support and Maintenance
+
+- Regular updates (performance improvements, security patches, new features).  
+- Technical support via email or ticket system.  
+- Option for paid custom development or advanced support.  
+
+## 8. Future Development Roadmap
+
+- Multi-language and multi-currency support.  
+- Mobile app development (React Native or Flutter) for invoice uploading and tracking.  
+- Integration with major accounting platforms (QuickBooks, SAP).  
+- Advanced AI: NLP for invoice text analysis, fraud detection, inventory forecasting.  
+- Built-in chatbot for user assistance.  
+
+## Important Notes for Developers / Technical Team
+
+- Consider modular or microservices architecture to allow future scalability.  
+- Security is a priority: password encryption, protection against XSS and SQL Injection, strict role-based access control.  
+- Write automated unit and integration tests to ensure quality.  
+- Use OpenAPI / Swagger for API documentation.  
+- Use Redux Toolkit or similar for frontend state management and maintain clear separation between frontend and backend logic.  
