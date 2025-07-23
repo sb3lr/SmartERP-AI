@@ -1,6 +1,6 @@
 
 # SmartERP AI
-
+ 
 ## 1. Project Overview
 
 An intelligent, comprehensive ERP system designesd for managing small and medium-sized businesses, combining:
